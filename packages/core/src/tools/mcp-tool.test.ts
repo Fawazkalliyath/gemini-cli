@@ -161,9 +161,78 @@ describe('DiscoveredMCPTool', () => {
       const toolResult: ToolResult = await invocation.execute(
         new AbortController().signal,
       );
-      expect(toolResult.returnDisplay).toBe('```json\n[]\n```');
+      expect(toolResult.returnDisplay).toContain(
+        'Error: No function response found in MCP tool output',
+      );
       expect(toolResult.llmContent).toEqual([
-        { text: '[Error: Could not parse tool response]' },
+        {
+          text: expect.stringContaining(
+            '[Error: Could not parse tool response - no function response found in the MCP tool output.',
+          ),
+        },
+      ]);
+    });
+
+    it('should handle empty content array with helpful warning message', async () => {
+      const params = { param: 'testValue' };
+      // MCP tool returns valid structure but empty content array
+      const mockMcpToolResponsePartsEmptyContent: Part[] = [
+        {
+          functionResponse: {
+            name: serverToolName,
+            response: { content: [] },
+          },
+        },
+      ];
+      mockCallTool.mockResolvedValue(mockMcpToolResponsePartsEmptyContent);
+      const invocation = tool.build(params);
+      const toolResult: ToolResult = await invocation.execute(
+        new AbortController().signal,
+      );
+      expect(toolResult.returnDisplay).toContain(
+        `Warning: MCP tool '${serverToolName}' returned an empty response`,
+      );
+      expect(toolResult.returnDisplay).toContain(
+        'The tool executed successfully but did not provide any output',
+      );
+      expect(toolResult.returnDisplay).toContain('Possible Reasons');
+      expect(toolResult.returnDisplay).toContain('Next Steps');
+      expect(toolResult.llmContent).toEqual([
+        {
+          text: expect.stringContaining(
+            `[Warning: MCP tool '${serverToolName}' returned an empty response.`,
+          ),
+        },
+      ]);
+    });
+
+    it('should handle malformed response without content array', async () => {
+      const params = { param: 'testValue' };
+      // MCP tool returns valid structure but no content field
+      const mockMcpToolResponsePartsMalformed: Part[] = [
+        {
+          functionResponse: {
+            name: serverToolName,
+            response: { someOtherField: 'value' },
+          },
+        },
+      ];
+      mockCallTool.mockResolvedValue(mockMcpToolResponsePartsMalformed);
+      const invocation = tool.build(params);
+      const toolResult: ToolResult = await invocation.execute(
+        new AbortController().signal,
+      );
+      expect(toolResult.returnDisplay).toContain(
+        `Error: MCP tool '${serverToolName}' returned a malformed response`,
+      );
+      expect(toolResult.returnDisplay).toContain('Expected Response Structure');
+      expect(toolResult.returnDisplay).toContain('Actual Response Structure');
+      expect(toolResult.llmContent).toEqual([
+        {
+          text: expect.stringContaining(
+            `[Error: MCP tool '${serverToolName}' returned a response without a valid 'content' array.`,
+          ),
+        },
       ]);
     });
 

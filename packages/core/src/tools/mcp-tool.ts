@@ -21,6 +21,7 @@ import type { CallableTool, FunctionCall, Part } from '@google/genai';
 import { ToolErrorType } from './tool-error.js';
 import type { Config } from '../config/config.js';
 import type { MessageBus } from '../confirmation-bus/message-bus.js';
+import { debugLogger } from '../utils/debugLogger.js';
 
 type ToolParams = Record<string, unknown>;
 
@@ -151,6 +152,11 @@ class DiscoveredMCPToolInvocation extends BaseToolInvocation<
       },
     ];
 
+    debugLogger.log(
+      `Executing MCP tool '${this.serverToolName}' from server '${this.serverName}' with params:`,
+      this.params,
+    );
+
     // Race MCP tool call with abort signal to respect cancellation
     const rawResponseParts = await new Promise<Part[]>((resolve, reject) => {
       if (signal.aborted) {
@@ -174,10 +180,17 @@ class DiscoveredMCPToolInvocation extends BaseToolInvocation<
         .callTool(functionCalls)
         .then((res) => {
           cleanup();
+          debugLogger.log(
+            `MCP tool '${this.serverToolName}' returned ${res?.length || 0} response parts`,
+          );
           resolve(res);
         })
         .catch((err) => {
           cleanup();
+          debugLogger.error(
+            `MCP tool '${this.serverToolName}' failed with error:`,
+            err,
+          );
           reject(err);
         });
     });
@@ -189,6 +202,7 @@ class DiscoveredMCPToolInvocation extends BaseToolInvocation<
       }' reported tool error for function call: ${safeJsonStringify(
         functionCalls[0],
       )} with response: ${safeJsonStringify(rawResponseParts)}`;
+      debugLogger.error(errorMessage);
       return {
         llmContent: errorMessage,
         returnDisplay: `Error: MCP tool '${this.serverToolName}' reported an error.`,
@@ -348,7 +362,54 @@ function transformMcpContentToParts(sdkResponse: Part[]): Part[] {
   const toolName = funcResponse?.name || 'unknown tool';
 
   if (!Array.isArray(mcpContent)) {
-    return [{ text: '[Error: Could not parse tool response]' }];
+    const responseStructure = funcResponse?.response
+      ? JSON.stringify(funcResponse.response, null, 2)
+      : 'No response object';
+    const errorMsg = funcResponse
+      ? `[Error: MCP tool '${toolName}' returned a response without a valid 'content' array.\n\n` +
+        `The response may be malformed or the tool may not be following the MCP protocol correctly.\n\n` +
+        `Expected structure: { content: [ { type: 'text', text: '...' } ] }\n` +
+        `Actual response structure:\n${responseStructure}\n\n` +
+        `Debugging tips:\n` +
+        `- Check the MCP server implementation for '${toolName}'\n` +
+        `- Verify the tool returns a 'content' array in the response\n` +
+        `- Ensure the MCP server follows the Model Context Protocol specification\n` +
+        `- Review server logs for additional error details]`
+      : '[Error: Could not parse tool response - no function response found in the MCP tool output.\n\n' +
+        `Raw SDK response: ${JSON.stringify(sdkResponse, null, 2)}\n\n` +
+        `Debugging tips:\n` +
+        `- This usually indicates the MCP server crashed or failed to respond\n` +
+        `- Check the MCP server process is running\n` +
+        `- Review server logs and stderr output\n` +
+        `- Verify the server configuration in gemini-extension.json]`;
+    debugLogger.warn(
+      `MCP tool response parsing failed for '${toolName}':`,
+      sdkResponse,
+    );
+    return [{ text: errorMsg }];
+  }
+
+  if (mcpContent.length === 0) {
+    debugLogger.warn(
+      `MCP tool '${toolName}' returned empty content array. Tool executed but provided no output.`,
+    );
+    return [
+      {
+        text:
+          `[Warning: MCP tool '${toolName}' returned an empty response.\n\n` +
+          `The tool executed successfully but did not provide any content.\n\n` +
+          `Possible reasons:\n` +
+          `- The tool completed successfully with no data to return (this may be expected behavior)\n` +
+          `- The tool encountered an issue but did not report an error properly\n` +
+          `- The tool's implementation may need to return content even for empty results\n` +
+          `- The tool parameters may not have matched any data\n\n` +
+          `Debugging tips:\n` +
+          `- Check if this is expected behavior for the tool\n` +
+          `- Review the tool's documentation for valid input parameters\n` +
+          `- Examine the MCP server logs for warnings or info messages\n` +
+          `- Verify the tool is configured correctly in your extension]`,
+      },
+    ];
   }
 
   const transformed = mcpContent.flatMap(
@@ -375,18 +436,72 @@ function transformMcpContentToParts(sdkResponse: Part[]): Part[] {
 /**
  * Processes the raw response from the MCP tool to generate a clean,
  * human-readable string for display in the CLI. It summarizes non-text
- * content and presents text directly.
+ * content and presents text directly. Provides comprehensive diagnostic
+ * information for troubleshooting.
  *
  * @param rawResponse The raw Part[] array from the GenAI SDK.
- * @returns A formatted string representing the tool's output.
+ * @returns A formatted string representing the tool's output with full diagnostic details.
  */
 function getStringifiedResultForDisplay(rawResponse: Part[]): string {
-  const mcpContent = rawResponse?.[0]?.functionResponse?.response?.[
-    'content'
-  ] as McpContentBlock[];
+  const funcResponse = rawResponse?.[0]?.functionResponse;
+  const mcpContent = funcResponse?.response?.['content'] as McpContentBlock[];
+  const toolName = funcResponse?.name || 'unknown tool';
 
   if (!Array.isArray(mcpContent)) {
-    return '```json\n' + JSON.stringify(rawResponse, null, 2) + '\n```';
+    const responseStructure = funcResponse?.response
+      ? JSON.stringify(funcResponse.response, null, 2)
+      : 'No response object available';
+    const rawResponseStr = JSON.stringify(rawResponse, null, 2);
+
+    const errorPrefix = funcResponse
+      ? `❌ Error: MCP tool '${toolName}' returned a malformed response.\n\n` +
+        `📋 Expected Response Structure:\n` +
+        `{\n  content: [\n    { type: 'text', text: 'your content here' },\n    // or other content types\n  ]\n}\n\n` +
+        `📦 Actual Response Structure:\n${responseStructure}\n\n`
+      : `❌ Error: No function response found in MCP tool output.\n\n` +
+        `This indicates the MCP server failed to execute or respond.\n\n`;
+
+    return (
+      errorPrefix +
+      `🔍 Full Raw Response (for debugging):\n` +
+      `\`\`\`json\n${rawResponseStr}\n\`\`\`\n\n` +
+      `💡 Troubleshooting Steps:\n` +
+      `1. Verify the MCP server is running and accessible\n` +
+      `2. Check server logs for errors or warnings\n` +
+      `3. Ensure the tool follows the MCP protocol specification\n` +
+      `4. Validate the extension configuration in gemini-extension.json\n` +
+      `5. Try restarting the extension or MCP server\n\n` +
+      `📚 Resources:\n` +
+      `- MCP Protocol Spec: https://modelcontextprotocol.io/specification\n` +
+      `- Extension Docs: Check your extension's README for configuration details`
+    );
+  }
+
+  if (mcpContent.length === 0) {
+    return (
+      `⚠️  Warning: MCP tool '${toolName}' returned an empty response.\n\n` +
+      `The tool executed successfully but did not provide any output.\n\n` +
+      `📊 Response Analysis:\n` +
+      `- Response structure: Valid (contains 'content' array)\n` +
+      `- Content items: 0 (empty array)\n` +
+      `- Execution status: Success (no errors reported)\n\n` +
+      `🤔 Possible Reasons:\n` +
+      `✓ The tool completed successfully with no data to return (expected behavior)\n` +
+      `✓ The query/parameters didn't match any data\n` +
+      `✓ The tool is designed to return empty results in some cases\n` +
+      `⚠️  The tool encountered an issue but didn't report an error\n` +
+      `⚠️  The tool implementation may need updating\n\n` +
+      `💡 Next Steps:\n` +
+      `1. Review the tool's documentation for expected behavior\n` +
+      `2. Check if the input parameters are correct\n` +
+      `3. Examine MCP server logs for additional context\n` +
+      `4. Try different parameters or queries\n` +
+      `5. Contact the extension maintainer if issue persists\n\n` +
+      `🔧 Debug Information:\n` +
+      `- Tool: ${toolName}\n` +
+      `- Response content array length: 0\n` +
+      `- Full response: ${JSON.stringify(rawResponse, null, 2)}`
+    );
   }
 
   const displayParts = mcpContent.map((block: McpContentBlock): string => {
