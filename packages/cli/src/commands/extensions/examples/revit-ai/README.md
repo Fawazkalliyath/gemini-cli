@@ -1,11 +1,14 @@
 # Revit AI Assistant Extension
 
-An example Gemini CLI extension that demonstrates how to build an AI assistant for Autodesk Revit with natural language command processing.
+An example Gemini CLI extension that demonstrates how to build an AI assistant
+for Autodesk Revit with natural language command processing.
 
 ## Overview
 
 This extension provides a foundation for building a Revit AI assistant that can:
-- Accept natural language commands (e.g., "create a wall", "add a door to the living room")
+
+- Accept natural language commands (e.g., "create a wall", "add a door to the
+  living room")
 - Parse and understand user intent
 - Confirm understanding when commands are ambiguous
 - Provide recommendations and guidance
@@ -14,22 +17,26 @@ This extension provides a foundation for building a Revit AI assistant that can:
 ## Features
 
 ### 🤖 Natural Language Processing
+
 - Parses conversational commands into structured Revit operations
 - Identifies parameters from natural language
 - Provides confidence scoring
 
 ### ✅ Confirmation Workflow
+
 - Always confirms understanding before execution
 - Shows what was understood and any assumptions
 - Provides recommendations when clarity is low
 
 ### 🔧 Revit Operations (Mock)
+
 - Create elements (walls, doors, windows, rooms, etc.)
 - Modify element properties
 - Delete elements
 - Query project information
 
 ### 📚 Context-Aware Assistance
+
 - Understands Revit terminology and concepts
 - Provides guidance on best practices
 - Explains requirements and constraints
@@ -37,22 +44,26 @@ This extension provides a foundation for building a Revit AI assistant that can:
 ## Installation
 
 ### Prerequisites
+
 - Node.js 20 or higher
 - Gemini CLI installed
 
 ### Setup
 
 1. Navigate to this directory:
+
    ```bash
    cd packages/cli/src/commands/extensions/examples/revit-ai
    ```
 
 2. Install dependencies:
+
    ```bash
    npm install
    ```
 
 3. Build the TypeScript code:
+
    ```bash
    npm run build
    ```
@@ -75,6 +86,7 @@ The extension will automatically load and provide Revit-specific context.
 ### Example Commands
 
 #### Simple Operations
+
 ```
 User: Create a wall
 Assistant: [parses command, shows understanding, asks for confirmation]
@@ -84,12 +96,14 @@ Assistant: [requests clarification on type, location, and dimensions]
 ```
 
 #### Complex Operations
+
 ```
 User: Add a 900mm wide door to the north wall of the living room
 Assistant: [shows full understanding, confirms parameters, provides recommendations]
 ```
 
 #### Ambiguous Commands
+
 ```
 User: Fix the thing in the corner
 Assistant: [identifies low confidence, asks clarifying questions, provides examples]
@@ -143,6 +157,7 @@ execute_revit_command:
 ## Current Implementation Status
 
 ### ✅ Implemented
+
 - MCP Server with tools for command parsing
 - Natural language understanding (basic pattern matching)
 - Confirmation workflow logic
@@ -150,6 +165,7 @@ execute_revit_command:
 - Mock tool responses for demonstration
 
 ### ❌ Not Implemented (Required for Production)
+
 - Actual Revit API integration
 - Revit add-in (.NET component)
 - Communication bridge between MCP server and Revit
@@ -175,7 +191,7 @@ public class RevitCommandHandler : IExternalApplication
         // Register command handlers
         // Set up communication with MCP server
     }
-    
+
     public Result OnShutdown(UIControlledApplication application)
     {
         // Clean up resources
@@ -186,6 +202,7 @@ public class RevitCommandHandler : IExternalApplication
 ### 2. Implement Communication Bridge
 
 Choose a communication method:
+
 - **HTTP REST API**: Simple, works across processes
 - **gRPC**: Efficient, type-safe
 - **Named Pipes**: Fast IPC on same machine
@@ -201,10 +218,10 @@ async ({ command }) => {
   const response = await fetch('http://localhost:8080/api/parse', {
     method: 'POST',
     body: JSON.stringify({ command }),
-    headers: { 'Content-Type': 'application/json' }
+    headers: { 'Content-Type': 'application/json' },
   });
   return await response.json();
-}
+};
 ```
 
 ### 4. Handle Revit Transactions
@@ -223,6 +240,7 @@ using (Transaction trans = new Transaction(doc, "Create Wall"))
 ### 5. Error Handling
 
 Implement robust error handling:
+
 - Validate parameters before execution
 - Handle Revit-specific exceptions
 - Provide meaningful error messages
@@ -231,19 +249,24 @@ Implement robust error handling:
 ## Development
 
 ### Building
+
 ```bash
 npm run build
 ```
 
 ### Testing
+
 The extension includes mock implementations that can be tested without Revit:
+
 ```bash
 # In Gemini CLI
 parse_revit_command { command: "create a wall" }
 ```
 
 ### Debugging
+
 Enable debug mode in Gemini CLI to see detailed MCP communication:
+
 ```bash
 DEBUG=1 gemini
 ```
@@ -251,6 +274,7 @@ DEBUG=1 gemini
 ## Limitations
 
 This is an **example extension** for demonstration purposes:
+
 - Does not actually connect to Revit
 - Returns mock data for all operations
 - Cannot execute real Revit commands
@@ -259,22 +283,26 @@ This is an **example extension** for demonstration purposes:
 ## Resources
 
 ### Revit API
+
 - [Revit API Documentation](https://www.revitapidocs.com/)
 - [Revit SDK Samples](https://github.com/jeremytammik/RevitSdkSamples)
 - [The Building Coder Blog](https://thebuildingcoder.typepad.com/)
 
 ### Gemini CLI
+
 - [Gemini CLI Documentation](https://geminicli.com/docs/)
 - [Extension Development Guide](../../../../../../docs/extensions/getting-started-extensions.md)
 - [MCP Server Documentation](../../../../../../docs/tools/mcp-server.md)
 
 ### Model Context Protocol
+
 - [MCP Specification](https://modelcontextprotocol.io/)
 - [MCP SDK](https://github.com/modelcontextprotocol/sdk)
 
 ## Contributing
 
 This is an example extension. If you want to extend it:
+
 1. Fork the repository
 2. Make your changes
 3. Test thoroughly
@@ -284,11 +312,15 @@ This is an example extension. If you want to extend it:
 
 Copyright 2025 Google LLC
 
-Licensed under the Apache License, Version 2.0. See the LICENSE file at the repository root.
+Licensed under the Apache License, Version 2.0. See the LICENSE file at the
+repository root.
 
 ## Support
 
 This is an example/demonstration extension. For:
-- Gemini CLI issues: [GitHub Issues](https://github.com/google-gemini/gemini-cli/issues)
-- Revit API questions: [Autodesk Forums](https://forums.autodesk.com/t5/revit-api-forum/bd-p/160)
+
+- Gemini CLI issues:
+  [GitHub Issues](https://github.com/google-gemini/gemini-cli/issues)
+- Revit API questions:
+  [Autodesk Forums](https://forums.autodesk.com/t5/revit-api-forum/bd-p/160)
 - Extension development: [Gemini CLI Documentation](https://geminicli.com/docs/)
