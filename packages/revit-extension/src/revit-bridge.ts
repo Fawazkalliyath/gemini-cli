@@ -121,7 +121,7 @@ export class RevitBridge {
         return;
       }
 
-      const messageId = `${command}_${Date.now()}_${Math.random().toString(36).substring(7)}`;
+      const messageId = `${command}_${Date.now()}_${crypto.randomUUID()}`;
       const message: RevitBridgeMessage = {
         type: 'command',
         id: messageId,
