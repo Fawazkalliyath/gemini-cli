@@ -1,0 +1,43 @@
+{
+  "name": "@google/gemini-cli-revit-extension",
+  "version": "0.21.0-nightly.20251202.2d935b379",
+  "description": "Revit AI Extension for Gemini CLI - Bridge between Gemini AI and Autodesk Revit",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/google-gemini/gemini-cli.git",
+    "directory": "packages/revit-extension"
+  },
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "gemini-revit-server": "dist/index.js"
+  },
+  "scripts": {
+    "build": "node ../../scripts/build_package.js",
+    "start": "node dist/index.js",
+    "lint": "eslint . --ext .ts,.tsx",
+    "format": "prettier --write .",
+    "test": "vitest run",
+    "test:ci": "vitest run --coverage",
+    "typecheck": "tsc --noEmit"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "GEMINI.md"
+  ],
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.23.0",
+    "zod": "^3.22.4",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.25",
+    "@types/ws": "^8.5.13",
+    "typescript": "^5.3.3",
+    "vitest": "^3.1.1"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

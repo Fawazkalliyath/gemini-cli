@@ -1,0 +1,15 @@
+{
+  "name": "revit-ai-extension",
+  "version": "1.0.0",
+  "description": "AI-powered Revit integration for Gemini CLI",
+  "mcpServers": {
+    "revit": {
+      "command": "node",
+      "args": ["${extensionPath}${/}dist${/}index.js"],
+      "cwd": "${extensionPath}",
+      "env": {
+        "REVIT_BRIDGE_PORT": "8080"
+      }
+    }
+  }
+}
