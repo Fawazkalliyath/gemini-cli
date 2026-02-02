@@ -1,0 +1,21 @@
+{
+  "name": "revit-ai-assistant",
+  "version": "1.0.0",
+  "description": "AI assistant for Autodesk Revit with natural language task execution",
+  "mcpServers": {
+    "revitServer": {
+      "command": "node",
+      "args": ["${extensionPath}${/}dist${/}revit-server.js"],
+      "cwd": "${extensionPath}"
+    }
+  },
+  "contextFileName": "GEMINI.md",
+  "settings": [
+    {
+      "name": "Revit API Key",
+      "envVar": "REVIT_API_KEY",
+      "sensitive": true,
+      "description": "API key for Revit integration (if required by your setup)"
+    }
+  ]
+}
