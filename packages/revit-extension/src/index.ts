@@ -6,6 +6,7 @@
 
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import { z } from 'zod';
 import {
   GetElementsInputSchema,
   CreateElementInputSchema,
@@ -361,16 +362,11 @@ server.registerPrompt(
     description:
       'AI-powered assistant for Revit tasks with context-aware suggestions',
     argsSchema: {
-      task: {
-        type: 'string',
-        description: 'The task you want to perform in Revit',
-      },
-      context: {
-        type: 'string',
-        description:
-          'Additional context about the current project or situation',
-        optional: true,
-      },
+      task: z.string().describe('The task you want to perform in Revit'),
+      context: z
+        .string()
+        .optional()
+        .describe('Additional context about the current project or situation'),
     },
   },
   ({ task, context }) => ({
