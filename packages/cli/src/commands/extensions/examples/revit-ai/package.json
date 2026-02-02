@@ -1,0 +1,18 @@
+{
+  "name": "revit-ai-assistant",
+  "version": "1.0.0",
+  "description": "AI assistant MCP Server for Autodesk Revit",
+  "type": "module",
+  "main": "revit-server.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "typescript": "~5.4.5",
+    "@types/node": "^20.11.25"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.23.0",
+    "zod": "^3.22.4"
+  }
+}
