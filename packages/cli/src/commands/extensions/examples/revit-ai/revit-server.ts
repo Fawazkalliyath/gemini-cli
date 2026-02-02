@@ -30,12 +30,12 @@ server.registerTool(
     // 1. Use NLP/LLM to parse the command
     // 2. Map to specific Revit API calls
     // 3. Extract parameters and validate them
-    
+
     const lowerCommand = command.toLowerCase();
     let operation = 'unknown';
     let params = {};
     let confidence = 0.5;
-    let recommendations: string[] = [];
+    const recommendations: string[] = [];
 
     // Simple pattern matching (in production, use more sophisticated NLP)
     if (lowerCommand.includes('create') || lowerCommand.includes('add')) {
@@ -48,26 +48,37 @@ server.registerTool(
           length: 'to be determined',
         };
         recommendations.push('Please confirm wall dimensions and type');
-      } else if (lowerCommand.includes('door') || lowerCommand.includes('window')) {
-        operation = lowerCommand.includes('door') ? 'create_door' : 'create_window';
-        confidence = 0.80;
+      } else if (
+        lowerCommand.includes('door') ||
+        lowerCommand.includes('window')
+      ) {
+        operation = lowerCommand.includes('door')
+          ? 'create_door'
+          : 'create_window';
+        confidence = 0.8;
         recommendations.push('Please specify family and location');
       } else if (lowerCommand.includes('room')) {
         operation = 'create_room';
         confidence = 0.75;
         recommendations.push('Please confirm room boundaries');
       }
-    } else if (lowerCommand.includes('delete') || lowerCommand.includes('remove')) {
+    } else if (
+      lowerCommand.includes('delete') ||
+      lowerCommand.includes('remove')
+    ) {
       operation = 'delete_element';
-      confidence = 0.70;
+      confidence = 0.7;
       recommendations.push('Please confirm which elements to delete');
-    } else if (lowerCommand.includes('modify') || lowerCommand.includes('change')) {
+    } else if (
+      lowerCommand.includes('modify') ||
+      lowerCommand.includes('change')
+    ) {
       operation = 'modify_element';
       confidence = 0.65;
       recommendations.push('Please specify what to modify and new values');
     }
 
-    if (confidence < 0.70) {
+    if (confidence < 0.7) {
       recommendations.push(
         'Command clarity is low. Please provide more specific details.',
       );
@@ -179,9 +190,12 @@ server.registerPrompt(
   'revit-assistant',
   {
     title: 'Revit Command Assistant',
-    description: 'Helps formulate and execute Revit commands from natural language',
+    description:
+      'Helps formulate and execute Revit commands from natural language',
     argsSchema: {
-      task: z.string().describe('The task the user wants to accomplish in Revit'),
+      task: z
+        .string()
+        .describe('The task the user wants to accomplish in Revit'),
     },
   },
   ({ task }) => ({
