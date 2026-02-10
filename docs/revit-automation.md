@@ -532,7 +532,7 @@ instructions.
 For issues or questions:
 
 1. Use `/bug` command in Gemini CLI to report issues
-2. Check [Troubleshooting Guide](../troubleshooting.md)
+2. Check [Troubleshooting Guide](./troubleshooting.md)
 3. Visit [GitHub Issues](https://github.com/google-gemini/gemini-cli/issues)
 
 ---
