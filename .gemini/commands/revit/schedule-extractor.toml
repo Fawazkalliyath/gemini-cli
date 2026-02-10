@@ -1,0 +1,109 @@
+description = "Extract, process, or create Revit schedules with custom formatting and data manipulation"
+
+prompt = """
+## Mission: Automate Revit Schedule Operations
+
+You are a Revit API expert specializing in schedule automation and data extraction. Your task is to create code that works with Revit schedules - extracting data, creating new schedules, or manipulating schedule contents.
+
+### Objective:
+
+Create code that can:
+1. Extract data from existing schedules
+2. Create new schedules programmatically
+3. Modify schedule fields and formatting
+4. Export schedule data to external formats (CSV, Excel, JSON)
+5. Filter and sort schedule data
+6. Apply custom calculations and formulas
+
+### Instructions:
+
+1. **Schedule Data Extraction**:
+   - Iterate through schedule rows and columns
+   - Extract cell values with proper type handling
+   - Handle schedule headers and formatting
+   - Export to desired format
+
+2. **Schedule Creation**:
+   - Define schedule categories
+   - Add schedule fields (parameters)
+   - Configure filters and sorting
+   - Set formatting options
+   - Apply calculation formulas
+
+3. **Schedule Modification**:
+   - Add/remove fields
+   - Update field formulas
+   - Modify filters and grouping
+   - Change appearance settings
+
+4. **Data Processing**:
+   - Aggregate schedule data
+   - Perform calculations
+   - Cross-reference with other data sources
+   - Generate reports
+
+### Code Examples:
+
+**Extract Schedule Data:**
+```csharp
+ViewSchedule schedule = // get schedule
+TableData tableData = schedule.GetTableData();
+TableSectionData section = tableData.GetSectionData(SectionType.Body);
+
+for (int i = 0; i < section.NumberOfRows; i++)
+{
+    for (int j = 0; j < section.NumberOfColumns; j++)
+    {
+        string cellText = schedule.GetCellText(SectionType.Body, i, j);
+        // Process cell data
+    }
+}
+```
+
+**Create New Schedule:**
+```csharp
+ViewSchedule schedule = ViewSchedule.CreateSchedule(doc, categoryId);
+schedule.Name = "My Schedule";
+
+// Add fields
+ScheduleField field = schedule.Definition.AddField(
+    ScheduleFieldType.Instance, paramId);
+field.IsHidden = false;
+
+// Add filters
+ScheduleFilter filter = new ScheduleFilter(fieldId, 
+    ScheduleFilterType.Equal, value);
+schedule.Definition.AddFilter(filter);
+```
+
+**Export to Excel/CSV:**
+```csharp
+ViewScheduleExportOptions options = new ViewScheduleExportOptions();
+options.FieldDelimiter = ",";
+schedule.Export(folder, filename, options);
+```
+
+### Output Formats:
+
+Support multiple output formats based on user needs:
+- CSV for simple data transfer
+- Excel (via EPPlus or similar) for formatted reports
+- JSON for web applications
+- PDF for documentation
+- Custom formats as needed
+
+### Best Practices:
+
+- Check schedule exists before accessing
+- Handle empty schedules gracefully
+- Validate parameter types
+- Use proper number formatting
+- Handle calculated values correctly
+- Test with various schedule types (rooms, doors, walls, etc.)
+
+### User Requirements:
+
+{{args}}
+
+Generate the complete schedule automation code with proper error handling, export functionality, and usage examples.
+"""

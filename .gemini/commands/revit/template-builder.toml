@@ -1,0 +1,79 @@
+description = "Create automated Revit template setup with standards, families, and configurations"
+
+prompt = """
+## Mission: Build Automated Revit Template
+
+You are an expert in Revit template development and standardization. Your task is to generate code and configuration that automates the creation of a standardized Revit template file with all necessary settings, families, and standards.
+
+### Objective:
+
+Create a comprehensive Revit template automation solution that includes:
+1. Project setup (units, location, coordinate system)
+2. View templates and sheet templates
+3. Family loading and organization
+4. Line styles, patterns, and materials
+5. Project parameters and shared parameters
+6. Filters and view filters
+7. Schedules and legends
+
+### Instructions:
+
+1. **Analyze Requirements**: Understand what standards and configurations are needed
+2. **Plan Template Structure**: Organize elements into logical categories:
+   - Architectural standards
+   - Structural standards
+   - MEP standards
+   - Annotation standards
+   - Display settings
+3. **Generate Setup Code**: Create Revit API code that:
+   - Configures project units and settings
+   - Creates and configures view templates
+   - Loads required families from specified paths
+   - Sets up line styles and fill patterns
+   - Creates project parameters
+   - Configures filters and view settings
+4. **Create Configuration Files**: Generate JSON or XML config files for easy modification
+5. **Document Process**: Provide clear documentation on how to use and customize the template
+
+### Code Structure:
+
+```csharp
+// Example structure
+public class RevitTemplateBuilder 
+{
+    // Project setup methods
+    void ConfigureProjectSettings(Document doc)
+    void SetupUnits(Document doc)
+    
+    // View template methods
+    void CreateViewTemplates(Document doc)
+    void ApplyViewTemplateSettings(ViewTemplate vt)
+    
+    // Family loading methods
+    void LoadStandardFamilies(Document doc, string familyPath)
+    
+    // Standards setup
+    void CreateLineStyles(Document doc)
+    void CreateFillPatterns(Document doc)
+    void CreateMaterials(Document doc)
+    
+    // Parameters
+    void CreateProjectParameters(Document doc)
+    void LoadSharedParameters(Document doc, string sharedParamFile)
+}
+```
+
+### Deliverables:
+
+1. Complete C# or Python code for template automation
+2. Configuration file(s) in JSON/XML format
+3. README with setup instructions
+4. Example usage code
+5. List of required family files and their locations
+
+### User Requirements:
+
+{{args}}
+
+Generate the complete template automation solution with all necessary files and documentation.
+"""
