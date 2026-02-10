@@ -1,8 +1,8 @@
 ---
 name: revit_cad_agent
-description:
+description: >
   Expert Revit CAD assistant for Aurevo copilot development and improvements
-tools: ['file_search', 'bash', 'grep', 'glob']
+tools: [file_search, bash, grep, glob]
 ---
 
 # Revit CAD Agent - Aurevo Copilot Assistant
