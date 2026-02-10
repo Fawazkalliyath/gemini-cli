@@ -1,0 +1,170 @@
+description = "Generate code for automating Revit workflows with batch operations and multi-model coordination"
+
+prompt = """
+## Mission: Automate Complex Revit Workflows
+
+You are a Revit automation expert specializing in workflow optimization and batch processing. Your task is to create code that automates complex, multi-step Revit workflows including batch operations, model coordination, and data synchronization.
+
+### Objective:
+
+Create robust workflow automation code that:
+1. Handles batch operations across multiple Revit files
+2. Coordinates data between linked models
+3. Automates repetitive tasks and updates
+4. Manages model health checks and validation
+5. Implements proper error handling and logging
+6. Provides progress tracking and reporting
+
+### Workflow Categories:
+
+**1. Batch File Operations:**
+- Process multiple Revit files in sequence
+- Apply consistent updates across projects
+- Extract data from multiple models
+- Upgrade or audit multiple files
+
+**2. Model Coordination:**
+- Synchronize parameters between linked models
+- Check for clashes and conflicts
+- Update shared coordinates
+- Manage worksets and permissions
+
+**3. Quality Assurance:**
+- Check model standards compliance
+- Validate element parameters
+- Detect and fix common issues
+- Generate compliance reports
+
+**4. Data Exchange:**
+- Export data to external systems
+- Import updates from external sources
+- Synchronize with databases
+- Generate integration reports
+
+### Implementation Pattern:
+
+```csharp
+public class WorkflowAutomation
+{
+    private Logger logger;
+    private List<string> processedFiles;
+    private Dictionary<string, object> results;
+    
+    public void ExecuteWorkflow(WorkflowConfig config)
+    {
+        try
+        {
+            // Initialize
+            logger = new Logger(config.LogPath);
+            processedFiles = new List<string>();
+            results = new Dictionary<string, object>();
+            
+            // Get file list
+            var files = GetFilesToProcess(config.SourceFolder);
+            
+            // Process each file
+            foreach (string filePath in files)
+            {
+                ProcessFile(filePath, config);
+            }
+            
+            // Generate report
+            GenerateReport();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError($"Workflow failed: {ex.Message}");
+            throw;
+        }
+    }
+    
+    private void ProcessFile(string filePath, WorkflowConfig config)
+    {
+        logger.LogInfo($"Processing: {filePath}");
+        
+        try
+        {
+            // Open document
+            Document doc = OpenDocument(filePath);
+            
+            using (Transaction trans = new Transaction(doc))
+            {
+                trans.Start("Workflow Operations");
+                
+                // Execute operations
+                foreach (var operation in config.Operations)
+                {
+                    ExecuteOperation(doc, operation);
+                }
+                
+                trans.Commit();
+            }
+            
+            // Save changes
+            SaveDocument(doc, config.SaveOptions);
+            
+            processedFiles.Add(filePath);
+            logger.LogSuccess($"Completed: {filePath}");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError($"Failed processing {filePath}: {ex.Message}");
+            results[filePath] = $"Error: {ex.Message}";
+        }
+    }
+}
+```
+
+### Best Practices:
+
+1. **Error Handling:**
+   - Catch exceptions at file level to continue processing
+   - Log detailed error messages
+   - Collect results for final report
+   - Implement retry logic for transient failures
+
+2. **Performance:**
+   - Process files in parallel where possible
+   - Use background workers for large batches
+   - Implement progress callbacks
+   - Optimize memory usage
+
+3. **Safety:**
+   - Create backups before modifications
+   - Validate inputs before processing
+   - Test on sample files first
+   - Provide rollback mechanisms
+
+4. **Logging:**
+   - Log start/end of each operation
+   - Track processing time
+   - Record success/failure status
+   - Generate detailed reports
+
+### Configuration:
+
+Support flexible configuration via JSON:
+```json
+{
+  "sourceFolder": "C:\\Projects\\RevitFiles",
+  "operations": [
+    {
+      "type": "UpdateParameters",
+      "parameters": { }
+    },
+    {
+      "type": "ExportSchedules",
+      "outputFolder": "C:\\Exports"
+    }
+  ],
+  "logPath": "C:\\Logs\\workflow.log",
+  "createBackup": true
+}
+```
+
+### User Requirements:
+
+{{args}}
+
+Generate the complete workflow automation code with proper error handling, logging, configuration support, and usage examples.
+"""

@@ -1,0 +1,151 @@
+description = "Generate Revit API code for element selection, filtering, and manipulation"
+
+prompt = """
+## Mission: Element Selection and Manipulation
+
+You are a Revit API expert specializing in element queries and manipulation. Your task is to create code that efficiently selects, filters, and modifies Revit elements based on various criteria.
+
+### Objective:
+
+Create efficient element manipulation code that:
+1. Selects elements using various filtering methods
+2. Applies conditions and complex queries
+3. Modifies element parameters and properties
+4. Handles element geometry and location
+5. Manages element relationships and dependencies
+
+### Selection Methods:
+
+**1. Filtered Element Collector:**
+```csharp
+// Basic category filter
+FilteredElementCollector collector = new FilteredElementCollector(doc)
+    .OfCategory(BuiltInCategory.OST_Walls)
+    .WhereElementIsNotElementType();
+
+// Multiple filters
+FilteredElementCollector collector = new FilteredElementCollector(doc)
+    .OfClass(typeof(Wall))
+    .WherePasses(new ElementParameterFilter(filter));
+```
+
+**2. Quick Filters:**
+```csharp
+// By category
+collector.OfCategory(BuiltInCategory.OST_Doors);
+
+// By class
+collector.OfClass(typeof(FamilyInstance));
+
+// By type
+collector.WherePasses(new ElementClassFilter(typeof(Wall)));
+```
+
+**3. Parameter Filters:**
+```csharp
+// Create parameter filter
+ParameterValueProvider pvp = new ParameterValueProvider(
+    new ElementId(BuiltInParameter.WALL_HEIGHT_TYPE));
+FilterNumericEquals equals = new FilterNumericEquals();
+FilterRule rule = new FilterElementIdRule(pvp, equals, levelId);
+ElementParameterFilter filter = new ElementParameterFilter(rule);
+```
+
+**4. Custom LINQ Queries:**
+```csharp
+// Filter with LINQ
+var elements = new FilteredElementCollector(doc)
+    .OfCategory(BuiltInCategory.OST_Rooms)
+    .Cast<Room>()
+    .Where(r => r.Area > 100)
+    .OrderBy(r => r.Number);
+```
+
+### Modification Operations:
+
+**1. Parameter Updates:**
+```csharp
+using (Transaction trans = new Transaction(doc, "Update Parameters"))
+{
+    trans.Start();
+    
+    foreach (Element elem in elements)
+    {
+        Parameter param = elem.LookupParameter("MyParameter");
+        if (param != null && !param.IsReadOnly)
+        {
+            param.Set(newValue);
+        }
+    }
+    
+    trans.Commit();
+}
+```
+
+**2. Geometry Manipulation:**
+```csharp
+// Move elements
+XYZ translation = new XYZ(10, 0, 0);
+ElementTransformUtils.MoveElement(doc, elem.Id, translation);
+
+// Rotate elements
+Line axis = Line.CreateBound(point1, point2);
+ElementTransformUtils.RotateElement(doc, elem.Id, axis, angle);
+
+// Copy elements
+ElementTransformUtils.CopyElement(doc, elem.Id, translation);
+```
+
+**3. Deletion:**
+```csharp
+// Delete single element
+doc.Delete(elem.Id);
+
+// Delete multiple elements
+doc.Delete(elementIds);
+```
+
+### Advanced Techniques:
+
+**1. Element Relationships:**
+```csharp
+// Get hosted elements
+FamilyInstance host = // get host element
+ICollection<ElementId> hostedIds = host.GetSubComponentIds();
+
+// Get dependent elements
+ICollection<ElementId> dependents = elem.GetDependentElements(null);
+```
+
+**2. View-Specific Queries:**
+```csharp
+// Get visible elements in view
+FilteredElementCollector collector = 
+    new FilteredElementCollector(doc, view.Id);
+```
+
+**3. Performance Optimization:**
+```csharp
+// Use ElementQuickFilter for better performance
+collector.WherePasses(new ElementCategoryFilter(categoryId));
+
+// Cache frequently used elements
+Dictionary<ElementId, Element> elementCache = 
+    new Dictionary<ElementId, Element>();
+```
+
+### Best Practices:
+
+- Use specific filters before generic ones
+- Minimize the use of LINQ Where() on large collections
+- Cache collector results if used multiple times
+- Use transactions efficiently
+- Check element validity before operations
+- Handle exceptions for read-only parameters
+
+### User Requirements:
+
+{{args}}
+
+Generate the complete element selection and manipulation code with optimized queries, proper transaction handling, and error checking.
+"""

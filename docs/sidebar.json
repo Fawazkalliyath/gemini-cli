@@ -65,6 +65,10 @@
         "slug": "docs/cli/custom-commands"
       },
       {
+        "label": "Revit automation",
+        "slug": "docs/revit-automation"
+      },
+      {
         "label": "Enterprise",
         "slug": "docs/cli/enterprise"
       },

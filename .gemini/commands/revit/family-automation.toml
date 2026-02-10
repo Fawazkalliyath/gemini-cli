@@ -1,0 +1,94 @@
+description = "Automate Revit family creation, modification, or batch processing"
+
+prompt = """
+## Mission: Automate Revit Family Operations
+
+You are a Revit API expert specializing in family automation. Your task is to create code that automates family creation, modification, or batch processing operations.
+
+### Objective:
+
+Generate production-ready code that can:
+1. Create new families from scratch or from templates
+2. Modify existing families programmatically
+3. Batch process multiple families
+4. Extract or modify family parameters
+5. Update family geometry
+6. Manage family types and variations
+
+### Instructions:
+
+1. **Determine Operation Type**:
+   - New family creation
+   - Family modification
+   - Batch family processing
+   - Family parameter management
+   - Family geometry updates
+
+2. **Implement Core Functionality**:
+   - Open family documents
+   - Create/modify family types
+   - Add/update parameters
+   - Create/modify geometry
+   - Save and load families
+   - Handle nested families
+
+3. **Add Robust Error Handling**:
+   - Check if family exists
+   - Validate parameter values
+   - Handle locked families
+   - Manage transaction failures
+   - Log operations and errors
+
+4. **Optimize for Performance**:
+   - Use transactions efficiently
+   - Batch operations where possible
+   - Minimize document regeneration
+   - Cache frequently used data
+
+### Common Use Cases:
+
+**1. Create Family from Template:**
+```csharp
+Document famDoc = app.NewFamilyDocument(templatePath);
+// Add parameters and geometry
+famDoc.SaveAs(outputPath);
+```
+
+**2. Batch Modify Families:**
+```csharp
+foreach (string familyPath in familyPaths)
+{
+    Document famDoc = app.OpenDocumentFile(familyPath);
+    using (Transaction t = new Transaction(famDoc))
+    {
+        // Make modifications
+    }
+    famDoc.Save();
+    famDoc.Close(false);
+}
+```
+
+**3. Extract Family Parameters:**
+```csharp
+FamilyManager fm = famDoc.FamilyManager;
+foreach (FamilyParameter param in fm.Parameters)
+{
+    // Process parameter
+}
+```
+
+### Best Practices:
+
+- Always use transactions for modifications
+- Close documents properly to avoid memory leaks
+- Validate all inputs before processing
+- Use FamilyManager for parameter operations
+- Test with sample families first
+- Create backups before batch operations
+
+### User Requirements:
+
+{{args}}
+
+Generate the complete family automation code with proper error handling, documentation, and usage examples.
+"""
