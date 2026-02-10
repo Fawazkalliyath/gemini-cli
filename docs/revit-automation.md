@@ -476,9 +476,9 @@ Request test code along with main code:
 
 ### Gemini CLI Documentation
 
-- [Custom Commands Guide](./custom-commands.md)
-- [GEMINI.md Context Files](./gemini-md.md)
-- [Extensions Overview](../extensions/index.md)
+- [Custom Commands Guide](./cli/custom-commands.md)
+- [GEMINI.md Context Files](./cli/gemini-md.md)
+- [Extensions Overview](./extensions/index.md)
 
 ## Examples Gallery
 
