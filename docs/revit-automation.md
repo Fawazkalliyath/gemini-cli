@@ -1,30 +1,37 @@
 # Revit Automation with Gemini CLI
 
-This guide explains how to use Gemini CLI for Revit automation, parametric design, and template creation workflows.
+This guide explains how to use Gemini CLI for Revit automation, parametric
+design, and template creation workflows.
 
 ## Overview
 
-Gemini CLI provides specialized commands that help you generate Revit API code for common automation tasks. These commands leverage AI to create production-ready C# or Python code that follows Revit API best practices.
+Gemini CLI provides specialized commands that help you generate Revit API code
+for common automation tasks. These commands leverage AI to create
+production-ready C# or Python code that follows Revit API best practices.
 
 ## Available Commands
 
 ### Parametric Design: `/revit:parametric-design`
 
-Generate parametric Revit families or components with adaptive parameters, formulas, and geometric relationships.
+Generate parametric Revit families or components with adaptive parameters,
+formulas, and geometric relationships.
 
 **Use cases:**
+
 - Create custom parametric families from scratch
 - Add intelligent parameter relationships
 - Implement formula-based geometry
 - Build adaptive components
 
 **Example:**
+
 ```bash
 gemini
 > /revit:parametric-design Create a parametric window family with adjustable height, width, and mullion spacing. Include parameters for glass type and frame material.
 ```
 
 The command will generate complete C# or Python code including:
+
 - Parameter definitions with proper types
 - Formula relationships between parameters
 - Geometry creation code
@@ -33,21 +40,25 @@ The command will generate complete C# or Python code including:
 
 ### Template Builder: `/revit:template-builder`
 
-Automate the creation of standardized Revit templates with all necessary settings, families, and standards.
+Automate the creation of standardized Revit templates with all necessary
+settings, families, and standards.
 
 **Use cases:**
+
 - Set up company standards
 - Create discipline-specific templates
 - Automate view template creation
 - Configure project parameters
 
 **Example:**
+
 ```bash
 gemini
 > /revit:template-builder Build a structural engineering template with AISC standards, including view templates for framing plans, foundation plans, and details. Add standard annotation families and line styles.
 ```
 
 Generates:
+
 - Project configuration code
 - View template setup
 - Family loading scripts
@@ -59,6 +70,7 @@ Generates:
 Batch process families or automate family creation and modification.
 
 **Use cases:**
+
 - Batch update family parameters
 - Create families from templates
 - Extract family information
@@ -66,12 +78,14 @@ Batch process families or automate family creation and modification.
 - Manage family types
 
 **Example:**
+
 ```bash
 gemini
 > /revit:family-automation Batch process all lighting fixture families in a folder, adding new parameters for wattage, lumens, and color temperature
 ```
 
 Generates:
+
 - File processing loops
 - Family opening/saving code
 - Parameter manipulation
@@ -83,6 +97,7 @@ Generates:
 Work with Revit schedules - create, extract, or modify schedule data.
 
 **Use cases:**
+
 - Export schedules to Excel/CSV
 - Create schedules programmatically
 - Modify schedule formatting
@@ -90,12 +105,14 @@ Work with Revit schedules - create, extract, or modify schedule data.
 - Generate reports
 
 **Example:**
+
 ```bash
 gemini
 > /revit:schedule-extractor Extract all room schedules from the current project and export to Excel with formatting. Include area calculations and grouping by department.
 ```
 
 Generates:
+
 - Schedule traversal code
 - Data extraction logic
 - Export functionality
@@ -107,6 +124,7 @@ Generates:
 Automate complex multi-step workflows and batch operations.
 
 **Use cases:**
+
 - Process multiple Revit files
 - Coordinate linked models
 - Run quality assurance checks
@@ -114,12 +132,14 @@ Automate complex multi-step workflows and batch operations.
 - Generate compliance reports
 
 **Example:**
+
 ```bash
 gemini
 > /revit:workflow-automation Create a workflow to process 100 Revit files: update shared parameters, export schedules, run model health checks, and generate a summary report
 ```
 
 Generates:
+
 - Batch processing framework
 - Error handling and recovery
 - Progress reporting
@@ -131,6 +151,7 @@ Generates:
 Select, filter, and modify Revit elements using optimized queries.
 
 **Use cases:**
+
 - Query elements by category
 - Apply complex filters
 - Update element parameters
@@ -138,12 +159,14 @@ Select, filter, and modify Revit elements using optimized queries.
 - Handle element relationships
 
 **Example:**
+
 ```bash
 gemini
 > /revit:element-manipulation Select all walls on Level 2 with height greater than 10 feet and update their fire rating parameter to "2 Hour"
 ```
 
 Generates:
+
 - FilteredElementCollector code
 - Parameter filters
 - LINQ queries
@@ -179,23 +202,27 @@ Simply type a slash command followed by your requirements:
 ### 4. Review and Use Generated Code
 
 Gemini CLI will generate:
+
 - Complete, working Revit API code
 - Detailed comments and documentation
 - Usage instructions
 - Configuration examples
 
-Copy the generated code into your Revit add-in, pyRevit script, or Dynamo Python node.
+Copy the generated code into your Revit add-in, pyRevit script, or Dynamo Python
+node.
 
 ## Best Practices
 
 ### 1. Be Specific with Requirements
 
 **Good:**
+
 ```
 /revit:family-automation Create a batch processor that opens all door families in C:\Families\Doors, adds a "Hardware Set" text parameter in the Identity Data group, and saves them with "_Updated" suffix
 ```
 
 **Less effective:**
+
 ```
 /revit:family-automation Update some families
 ```
@@ -203,11 +230,13 @@ Copy the generated code into your Revit add-in, pyRevit script, or Dynamo Python
 ### 2. Specify Language and Version
 
 Always mention:
+
 - **Language**: C# or Python
 - **Revit version**: 2020, 2022, 2024, etc.
 - **Platform**: pyRevit, Dynamo, standalone add-in
 
 **Example:**
+
 ```
 /revit:parametric-design Using pyRevit Python for Revit 2024, create a parametric beam family...
 ```
@@ -260,11 +289,15 @@ Create a `GEMINI.md` file in your project to provide context:
 
 ```markdown
 # Project: Office Building Renovation
+
 # Revit Version: 2024
+
 # Standards: Company BIM Manual v3.2
+
 # Language Preference: C# for add-ins
 
 Our standard parameters:
+
 - Project Number (text)
 - Design Phase (text)
 - Responsible Party (text)
@@ -297,7 +330,7 @@ Request code that integrates with your existing infrastructure:
 ```
 /revit:family-automation Process all families in folder:
 1. Open each family
-2. Add shared parameter "Manufacturer" 
+2. Add shared parameter "Manufacturer"
 3. Add shared parameter "Model Number"
 4. Create two types: "Standard" and "Premium"
 5. Save and close
@@ -343,6 +376,7 @@ Request code that integrates with your existing infrastructure:
 ### 1. Use for Learning
 
 Even if you're experienced with Revit API, use these commands to:
+
 - See modern API patterns
 - Learn new API methods
 - Get code structure examples
@@ -390,6 +424,7 @@ Request test code along with main code:
 **Issue**: Code has compilation errors
 
 **Solutions**:
+
 1. Check Revit API version matches your installation
 2. Verify all referenced assemblies are available
 3. Ask Gemini CLI to fix specific errors:
@@ -402,6 +437,7 @@ Request test code along with main code:
 **Issue**: Code executes but doesn't do what you expected
 
 **Solutions**:
+
 1. Add debugging output:
    ```
    > Add Console.WriteLine statements to debug the element selection logic
@@ -416,6 +452,7 @@ Request test code along with main code:
 **Issue**: Code is slow with large models
 
 **Solutions**:
+
 1. Request optimization:
    ```
    > Optimize the FilteredElementCollector query for better performance with large models
@@ -428,14 +465,17 @@ Request test code along with main code:
 ## Resources
 
 ### Revit API Documentation
+
 - [Revit API Developer's Guide](https://www.revitapidocs.com/)
 - [Revit API Forum](https://forums.autodesk.com/t5/revit-api-forum/bd-p/160)
 
 ### pyRevit Resources
+
 - [pyRevit Documentation](https://pyrevitlabs.github.io/pyRevit/)
 - [pyRevit GitHub](https://github.com/eirannejad/pyRevit)
 
 ### Gemini CLI Documentation
+
 - [Custom Commands Guide](./custom-commands.md)
 - [GEMINI.md Context Files](./gemini-md.md)
 - [Extensions Overview](../extensions/index.md)
@@ -445,6 +485,7 @@ Request test code along with main code:
 ### Example 1: Adaptive Parametric Family
 
 **Request:**
+
 ```
 /revit:parametric-design Create an adaptive curtain wall panel family with:
 - 4 adaptive points
@@ -453,11 +494,13 @@ Request test code along with main code:
 - Formula-driven geometry
 ```
 
-**Output:** Complete C# code with adaptive component creation, reference point handling, and pattern-based geometry.
+**Output:** Complete C# code with adaptive component creation, reference point
+handling, and pattern-based geometry.
 
 ### Example 2: Standards Template
 
 **Request:**
+
 ```
 /revit:template-builder Create architectural template following National CAD Standard:
 - A-series sheet sizes
@@ -466,11 +509,13 @@ Request test code along with main code:
 - Keynote legend setup
 ```
 
-**Output:** Complete template builder with configuration files and setup instructions.
+**Output:** Complete template builder with configuration files and setup
+instructions.
 
 ### Example 3: Quality Assurance Workflow
 
 **Request:**
+
 ```
 /revit:workflow-automation Create QA workflow:
 - Check all rooms are bounded
@@ -485,10 +530,13 @@ Request test code along with main code:
 ## Support
 
 For issues or questions:
+
 1. Use `/bug` command in Gemini CLI to report issues
 2. Check [Troubleshooting Guide](../troubleshooting.md)
 3. Visit [GitHub Issues](https://github.com/google-gemini/gemini-cli/issues)
 
 ---
 
-**Note:** This feature is part of Gemini CLI's extensible command system. The Revit commands are custom commands that can be modified or extended for your specific needs.
+**Note:** This feature is part of Gemini CLI's extensible command system. The
+Revit commands are custom commands that can be modified or extended for your
+specific needs.
